@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+#define SIZE 10
+#define LEFT(i) 2*(i)+1
+#define RIGHT(i) 2*(i)+2
+#define ARRAY_LENGHT(a) (sizeof(a)/sizeof(a[0]))
+#define SWAP(a, b)  a ^= b; b ^= a; a ^= b; 
+
+int main()
+{
+  int A[SIZE] = {6,4,8,9,10,2,5,1,9,10};
+  int i= 0;
+}
