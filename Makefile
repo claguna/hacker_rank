@@ -1,12 +1,24 @@
-CPP_FILES := $(wildcard *.cpp)
-OBJ_FILES := $(addprefix obj/,$(notdir $(CPP_FILES:.cpp=.o)))
+#make all compile each src/*cpp file and create an individual executable in bin/
 
-all:$(OBJ_FILES)
-	g++ -o $@ $^
+#make staircase   will compile staircase.cpp and create bin/staircase 
 
-obj/%.o: %cpp
-	g++ -c -o $@ $<
+# file Makefile
+CC= g++
+RM= rm -vf
+SRC= ./src/
+CFLAGS= -Wall -g
+CPPFLAGS= -I.
+SRCFILES= $(wildcard ./src/*.cpp)
+OBJFILES= $(patsubst ./src/%.cpp, %.o, $(SRCFILES))
+PROGFILES= $(patsubst ./src/%.cpp, %, $(SRCFILES))
+BIN=./bin/
+.PHONY: all clean
+
+all: $(PROGFILES)
+
+$(PROGFILES): $(OBJ)
+	$(CC) -o $(BIN)$@ $^ $(CFLAGS) $(SRC)$@.cpp
 
 clean:
-	find -maxdepth 1 -executable | xargs rm ; rm *cpp~ *~
-
+	$(RM) $(BIN)* $(SRC)*~
+## eof Makefile
