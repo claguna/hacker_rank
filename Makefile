@@ -1,2 +1,2 @@
 all:
-	find . -executable | xargs rm ; rm *cpp~
+	find -maxdepth 1 -executable | xargs rm ; rm *cpp~ *~
