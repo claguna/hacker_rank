@@ -20,6 +20,16 @@
 using namespace std;
 /*https://www.hackerrank.com/challenges/maxsubarray*/
 
+
+/*Get the max contigous sub array.
+  We keep track of the sum and best sum from the start of the
+  array to the end.
+  if the sum goes negative, it means all the elements we have 
+  visited will not be part of the result then, we can discard
+  them and save the start position only when the sum is cero.
+  The end position is updated only when the current sum is
+  better than the best sum.
+*/
 int max_sub_array(vector<long> array)
 {
 
