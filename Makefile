@@ -12,6 +12,8 @@ SRCFILES= $(wildcard ./src/*.cpp)
 OBJFILES= $(patsubst ./src/%.cpp, %.o, $(SRCFILES))
 PROGFILES= $(patsubst ./src/%.cpp, %, $(SRCFILES))
 BIN=./bin/
+TEST_CASES=./testcases/
+
 .PHONY: all clean
 
 all: $(PROGFILES)
@@ -20,5 +22,5 @@ $(PROGFILES): $(OBJ)
 	$(CC) -o $(BIN)$@ $^ $(CFLAGS) $(SRC)$@.cpp
 
 clean:
-	$(RM) $(BIN)* $(SRC)*~
+	$(RM) $(BIN)* $(SRC)*~ $(TEST_CASES)*~
 ## eof Makefile
