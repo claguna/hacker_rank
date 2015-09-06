@@ -8,7 +8,8 @@
 #include <stack>
 #include <bitset>
 #include <cstdio>
-#include <vector>
+#include <vector>file:///home/claguna/Projects/hackerrank/src/candies.cpp
+
 #include <cstdlib>
 #include <numeric>
 #include <sstream>
