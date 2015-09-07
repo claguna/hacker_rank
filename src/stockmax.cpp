@@ -19,41 +19,34 @@
 
 using namespace std;
 
-int stockmax(vector<int> prices)
+long stockmax(vector<long> prices,unsigned int start, unsigned int end)
 {
-	int max_profit = 0;
-	int local_min = 0;
-	int local_max = 0;
-	int local_buy = 0;
-    int shares_bought = 0;
+	long max_profit = 0;
+	long max_in_interval = start;
+	long spent_money = 0;
+	long shares_bought = 0;
 	
-	//cout << "------\n";
-	for(unsigned int i = 0; i < prices.size(); i++){		
-		if(prices[i] < prices[local_min])
-			local_min = i;
-		//cout <<"lmin "<< local_min << "\n";
-		if(prices[i] > prices[local_max])
-			local_max = i;
-		//cout <<"lmax "<< local_max << "\n";
-		
-		if( (i < prices.size()-1 && prices[i] > prices[i+1]) || (i == prices.size()-1 && prices[i-1] < prices[i]) ){
-			if(local_buy > 0)
-				max_profit += prices[local_max]*shares_bought - local_buy;
-			else
-			  max_profit += prices[local_max] - prices[local_min];
-			local_min = i;
-			local_max = i+1;
-			local_buy = 0;
-			shares_bought = 0;
-		}
-		
-		if(i < prices.size()-1 && prices[i] < prices[i+1])
-		{
-			local_buy += prices[i];
-			shares_bought ++;
-			//cout << "lbuy "<<local_buy<<"\n";
-		}
+	if(start > end)
+		return 0;
+    //cout << "start "<< start << " end "<< end<<endl;	
+	/*Get Maximum price in interval*/
+	for(unsigned int i = start; i < end; i++){
+		if(prices[max_in_interval] < prices[i])
+			max_in_interval = i;
 	}
+	
+
+	//cout << "max_int "<< max_in_interval << " shares "<< shares_bought << "\n"; 
+	for(unsigned int i = start; i < max_in_interval; i++){
+		spent_money += prices[i];
+		shares_bought++;
+	}	
+	
+	if(shares_bought){
+		max_profit = shares_bought* prices[max_in_interval] - spent_money;
+        max_profit += stockmax(prices, max_in_interval+1, end);
+	}
+	
 	return max_profit;
 }
 
@@ -65,16 +58,16 @@ int main()
 
 	for(int i = 0; i < testcases; i++){
 		int nelements;
-		vector<int> array;
+		vector<long> array;
 		int tmp;
-		
+		pair<int, int> dummy;
 		cin >> nelements;
 		
 		for(int j = 0; j < nelements; j++){
 			cin >> tmp;
 			array.push_back(tmp);
 		}
-		cout << stockmax(array) << "\n";
+		cout << stockmax(array, 0, array.size()) << "\n";
 	}
 	return 0;
 	
