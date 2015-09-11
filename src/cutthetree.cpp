@@ -19,37 +19,74 @@
 
 using namespace std;
 /*https://www.hackerrank.com/challenges/cut-the-tree*/
-int dfs(vector< int >  *al, int start_node, vector<int> vvalues, pair<int, int> omitedge)
+
+vector<bool> visited;
+
+bool reachable_from_root(vector< int >  *al, int start_node, pair<int,int> oe)
 {
-	int res = 0;
-	if(al[start_node].size()==0){
-		cout << start_node<< " " << vvalues[start_node] << endl;
-		return vvalues[start_node];
-	}		
+	bool reachable = false;
+	
+	visited[start_node] = true;
 	vector<int>  adj_nodes;
 	adj_nodes = al[start_node];
 	for(unsigned int i = 0; i < adj_nodes.size(); i++){
-		if(start_node == omitedge.first && i == omitedge.second)
+		
+		if( (start_node == oe.first && adj_nodes[i] == oe.second ) ||
+			(start_node == oe.second && adj_nodes[i] == oe.first))
 			continue;
-		res += dfs(al, adj_nodes[i], vvalues, omitedge);
+		
+		if(!visited[adj_nodes[i]])
+			return  reachable_from_root(al, vvalues, oe);
 	}
-	return res;	
 }
 
-int mintreediff( vector< int > *al, vector<int> vvalues)
+int dfs(vector< int >  *al, int start_node, vector<int> vvalues, pair<int,int> oe)
+{
+	int res = 0;
+	
+    visited[start_node] = true;
+	
+	//cout << start_node<<endl;
+	vector<int>  adj_nodes;
+	adj_nodes = al[start_node];
+	for(unsigned int i = 0; i < adj_nodes.size(); i++){
+		
+		if( (start_node == oe.first && adj_nodes[i] == oe.second ) ||
+			(start_node == oe.second && adj_nodes[i] == oe.first))
+			continue;
+		
+		if(!visited[adj_nodes[i]])
+			res += dfs(al, adj_nodes[i], vvalues, oe);
+	}
+	return vvalues[start_node-1] + res;	
+}
+
+int mintreediff(vector< int > *al, vector< pair<int,int> > edges, vector<int> vvalues)
 {
 	int min = numeric_limits<int>::max();
-	for(unsigned int i = 0; i < vvalues.size(); i++){
-		vector<int> adj_i;
-		adj_i = al[i];
-		for(unsigned int j = 0; j < adj_i.size(); j++){
-			cout << "rem edge "<< i<< " "<< adj_i[j]<<endl;
-			int t1 = dfs(al, 1, vvalues, make_pair(i, adj_i[j]));
-			int t2 = dfs(al, i, vvalues, make_pair(i, adj_i[j]));
-			int tdiff = abs(t2- t1);
-			if(tdiff < min)
-				min = tdiff;
-		}
+	for(int i = 0; i< vvalues.size(); i++)
+		visited[i] = false;
+	
+    //return dfs(al, 3, vvalues, make_pair(2,3));
+
+	
+	for(unsigned int i = 0; i < edges.size(); i++){
+		pair <int, int> p = edges[i];
+		cout << "rem edge "<< p.first<< " "<<  p.second << endl;
+			
+		for(int k = 0; k< vvalues.size(); k++)
+			visited[k] = false;
+		int t1 = dfs(al, 1, vvalues, p);
+			
+		for(int k = 0; k< vvalues.size(); k++)
+			visited[k] = false;
+		
+		int t2 = dfs(al, max(p.first,p.second), vvalues, p);
+
+		cout << "t1 "<<t1 <<" t2 "<< t2 <<endl;
+		int tdiff = abs(t2 - t1);
+		if(tdiff < min && tdiff != 0)
+			min = tdiff;		
 	}
 	return min;
 }
@@ -59,19 +96,31 @@ int main()
 	int nvertices;
 	vector<int> vvalues;
 	vector< int > *al;
+	vector< pair<int,int> > edges;
+	
 	cin >> nvertices;
 
 	for(int i = 0; i< nvertices; i++){
 		int t;
 		cin >> t;
 		vvalues.push_back(t);
+		visited.push_back(false);
 	}
-	al = new  vector< int > [nvertices];
+	al = new  vector< int > [nvertices+1];
 	for(int i = 0; i < nvertices-1; i++){
 		int a, b;
 		cin >> a;
 		cin >> b;
-		al[a-1].push_back(b-1);
+		al[a].push_back(b);
+		al[b].push_back(a);
+		edges.push_back(make_pair(a,b));
 	}
-	cout << mintreediff(al, vvalues);
+	for(int i = 1; i < nvertices; i++){
+		vector<int>  adj_nodes;
+	    adj_nodes = al[i];
+	    for(unsigned int j = 0; j < adj_nodes.size(); j++){	   
+	     	cout << i <<" -> "<<adj_nodes[j]<<endl;		
+	    }
+	}
+	cout << mintreediff(al, edges,vvalues);
 }

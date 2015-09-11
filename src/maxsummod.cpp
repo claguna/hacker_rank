@@ -20,30 +20,34 @@
 
 using namespace std;
 
-int max_sum_mod(vector<long> array, int mod)
+int max_sum_mod(vector<long> array, long mod)
 {
 	long current_sum = 0;
 	long best_sum    = 0;
-	int start_dx     = -1;
-	int end_idx      = -1;
+    long global_max_mod = 0;
+	vector <long> psum;
 
-	for(unsigned int i = 0; i < array.size(); i++ ){
-		int tmp = current_sum;
+	for(unsigned int i = 0; i < array.size(); i++){
 		current_sum += array[i];
-		if (current_sum >= 0){
-			if(tmp % mod == 0){
-				start_dx = i;
+		psum.push_back(current_sum);
+	}
+
+	for(unsigned int start = 0; start < array.size(); start++){
+		for(unsigned int end = start; end < array.size(); end++){
+			int t;
+			current_sum = psum[end];
+			if( start >= 1 )
+				current_sum = current_sum - psum[start - 1];
+			t = current_sum % mod ;
+			if( t > best_sum){
+				best_sum = t;
+				if(global_max_mod < best_sum)
+					global_max_mod = best_sum;
 			}
-			if(current_sum % mod > best_sum){
-				best_sum = current_sum % mod;
-				end_idx = i;
-			}			    
-		}else{
-			current_sum = 0;
 		}
 	}
-    cout << start_dx << " "<< end_idx << endl;
-	return best_sum;
+	
+	return global_max_mod;
 }
 
 int main()
@@ -51,7 +55,8 @@ int main()
 	int testcases;
 	cin >> testcases;
 	for(int i = 0; i < testcases; i++){
-		int n,m;
+		int n;
+		long m;
 		vector<long> array;
 		cin >> n;
 		cin >> m;
