@@ -22,9 +22,12 @@ using namespace std;
 
 vector<bool> visited;
 
-bool reachable_from_root(vector< int >  *al, int start_node, pair<int,int> oe)
+bool reachable_from_root(vector< int >  *al, int start_node, int endnode, pair<int,int> oe)
 {
 	bool reachable = false;
+	
+	if(start_node == endnode)
+		return true;
 	
 	visited[start_node] = true;
 	vector<int>  adj_nodes;
@@ -36,8 +39,9 @@ bool reachable_from_root(vector< int >  *al, int start_node, pair<int,int> oe)
 			continue;
 		
 		if(!visited[adj_nodes[i]])
-			return  reachable_from_root(al, vvalues, oe);
+			return  reachable_from_root(al, adj_nodes[i], endnode, oe);
 	}
+	return reachable;
 }
 
 int dfs(vector< int >  *al, int start_node, vector<int> vvalues, pair<int,int> oe)
@@ -72,16 +76,26 @@ int mintreediff(vector< int > *al, vector< pair<int,int> > edges, vector<int> vv
 	
 	for(unsigned int i = 0; i < edges.size(); i++){
 		pair <int, int> p = edges[i];
+		int tnode = p.first;
+		
 		cout << "rem edge "<< p.first<< " "<<  p.second << endl;
 			
 		for(int k = 0; k< vvalues.size(); k++)
 			visited[k] = false;
 		int t1 = dfs(al, 1, vvalues, p);
-			
+		
 		for(int k = 0; k< vvalues.size(); k++)
 			visited[k] = false;
 		
-		int t2 = dfs(al, max(p.first,p.second), vvalues, p);
+		if(reachable_from_root(al, 1, p.first, p))
+			tnode = p.second;
+		else
+			tnode = p.first;
+		cout << tnode << endl;	
+		for(int k = 0; k< vvalues.size(); k++)
+			visited[k] = false;
+		
+		int t2 = dfs(al, tnode, vvalues, p);
 
 		cout << "t1 "<<t1 <<" t2 "<< t2 <<endl;
 		int tdiff = abs(t2 - t1);
