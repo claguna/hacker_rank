@@ -7,6 +7,7 @@
 
 using namespace std;
 
+bool debug = false;
 /* 
 Given an array of elements and k is the expected sum.
 
@@ -17,11 +18,12 @@ sum of these numbers is as near as possible
 int knapsack(vector<int> arr, int k){
   /*Create a matrix of dimension (arr.size , k)
   */
-  int **m;
-  m  = new int *[arr.size()+1];
-  for(int i = 0; i <= arr.size(); i++){
-    m[i] = new int[k];
-  }
+  // int **m;
+  // m  = new int *[arr.size()+1];
+  // for(int i = 0; i <= arr.size(); i++){
+  //   m[i] = new int[k];
+  // }
+  vector<vector<int> > m(arr.size()+1, vector<int>(k+1));
   
   /*The entry (i,j) represents the maximum weight we can carry if we take element i
     if the sack has maximum weight of j
@@ -30,6 +32,11 @@ int knapsack(vector<int> arr, int k){
   /* (0,j) = 0 If we are not taking any elements then the sum is zero*/
   for(int j=0; j<=k; j++)
     m[0][j] = 0;
+
+  for(int i = 0; i <= arr.size(); i++){
+	  for(int j=0; j <= k; j++)
+		  m[i][j] = 0;	  
+  }
 
   /*
     The item i has weight w, if we cannot carry w more weigth then we leave the object
@@ -40,20 +47,28 @@ int knapsack(vector<int> arr, int k){
   for(int i=1; i<=arr.size(); i++){
     for(int w=1; w<=k; w++){
       if( arr[i] > w){ //we cannot carry this iterm
-	m[i][w] = m[i-1][w];
+	    m[i][w] = m[i-1][w];
       }
       else{
-	m[i][w] = max( m[i-1][w], m[i-1][w-arr[i]] + arr[i]); // in this case value of i = its weight
+		  //cout << m[i][w-arr[i]] << " "<< w-arr[i]<< endl;
+		  m[i][w] = max( m[i-1][w], m[i][w-arr[i]] + arr[i]);		  		 
+		  
+		  //m[i][w] = max( m[i-1][w], m[i-1][w-arr[i]] + arr[i]);
+        // in this case value of i = its weight
       }
     }
   }
 
-  for(int i=0; i <= arr.size(); i++){
-    for(int w=0; w <= k; w++){
-      cout << m[i][w] << " ";
-    }
-    cout << "\n";
+  if(debug){
+	  for(int i=0; i <= arr.size(); i++){
+		  for(int w=0; w <= k; w++){
+			  cout << m[i][w] << " ";
+		  }
+		  cout << "\n";
+	  }	  
   }
+  
+  
   return m[arr.size()][k];    
 }
 
@@ -63,9 +78,9 @@ int main()
   int n, k;   
 
   /*Input */
-  scanf("%d",&n_cases);
+  cin >> n_cases;
   for(int i=0; i < n_cases; i++){
-    scanf("%d %d",&n, &k);
+	cin >> n >> k ;
     vector <int>  ar;
 
     ar.push_back(-1);
@@ -75,7 +90,7 @@ int main()
       cin >> tmp;
       ar.push_back(tmp);
     }
-    knapsack(ar, k);
+    cout << knapsack(ar, k) << endl;
   }
   return 0;
 }
