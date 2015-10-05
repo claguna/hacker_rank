@@ -41,7 +41,9 @@ int poisplants(vector<int> A)
 		it2 = l.begin();
 		it2++;
 		while(it2 != l.end()){
-			
+			if(*it2 > *it1){
+				l.erase(it2);
+			}			
 		}
 		
 	}
