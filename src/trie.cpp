@@ -1,55 +1,63 @@
-#include <map>
-#include <set>
 #include <cstdio>
-#include <vector>
 #include <cstdlib>
-#include <numeric>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
+#include <utility> 
 
-#define  ALPHABET_SIZE 32
+#define  ALPHABET_SIZE 30
 
 using namespace std;
 
-typedef struct Node{
-	bool isleaf;   /*mark the end of a word*/
-	Node * child[ALPHABET_SIZE];
-}Node;
+struct Node{
+	bool isleaf;
+	struct Node* child[ALPHABET_SIZE];
+};
 
 struct Node head;
 
-void insert(string word){	
+void init()
+{	
+	head.isleaf = false;
+}
+	
+void insert(string word)
+{	
 	Node *current = &head;
-    Node * child;
+    
 	for(unsigned int i = 0; i < word.size(); i++){
 		int letter = (int)word[i] - (int)'a';
-		child = current->child[letter];
-		if(!child){
-			child = (Node *)malloc(sizeof(Node));
-			child -> isleaf = false;
+		
+		if(!current->child[letter]){
+			current->child[letter] = (Node *)malloc(sizeof(Node));			
 		}
-		current = child;
+		current->child[letter]-> isleaf = false;
+		current = current->child[letter];
 	}
 	current->isleaf = true;
 }
 
-/*true if there is a prefix of "word" in the trie*/
-bool find_prefix_in_trie(string word){	
+bool isprefix(string word)
+{	
 	Node * current = &head;
 	
 	for(unsigned int i = 0; i < word.size(); i++){
 		int letter = (int)word[i] - (int)'a';		
 		current = current->child[letter];
 		
-		if(!current) /*The word is not in the trie*/
+		/*Word is not in the trie. Then there is no prefix*/
+		if(!current)
 			return false;
-		if(current->isleaf){ 
-           /*we reached the end of a word in the trie,
-			 then "word" has a prefix in the trie
-			*/
+		/*We hit the end of a word x, then x is prefix of word*/
+		if(current && current->isleaf){
 		   return true;
 	    }
-	}		
+	}	
+	/*We reached the end of word but the node is not leaf
+      then word is prefix of a word in the trie*/
+	if(!current->isleaf)
+		return true;
+		
 	return false;
 }
 
@@ -57,14 +65,13 @@ int main()
 {
 	int n;
 	cin >> n;
-	head.isleaf = false;
-	
+	init();
+	 
 	for(int i = 0; i < n; i++){
 		string ss;		
 		cin >> ss; 
-		if(find_prefix_in_trie(ss)){
-			cout << "BAD SET" << endl;
-			cout << ss ;
+		if(isprefix(ss)){
+			cout << "BAD SET" << endl << ss ;
 			return 0 ;
 		}		
 		insert(ss);			
