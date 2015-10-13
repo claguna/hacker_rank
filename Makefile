@@ -19,7 +19,7 @@ TEST_CASES=./testcases/
 all: $(PROGFILES)
 
 $(PROGFILES): $(OBJ)
-	$(CC) -o $(BIN)$@ $^ $(CFLAGS) $(SRC)$@.cpp
+	$(CC) -std=c++0x -o $(BIN)$@ $^ $(CFLAGS) $(SRC)$@.cpp
 
 clean:
 	$(RM) $(BIN)* $(SRC)*~ $(TEST_CASES)*~
